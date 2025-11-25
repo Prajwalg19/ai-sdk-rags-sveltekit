@@ -10,7 +10,7 @@ export const createResource = query(insertResourceSchema, async (input) => {
 
 		const [resource] = await db.insert(resources).values({ content }).returning();
 		const embeddings = await generateEmbeddings(resource.content);
-		db.insert(embeddingTable).values(
+		await db.insert(embeddingTable).values(
 			embeddings.map((embedding) => ({
 				resourceId: resource.id,
 				...embedding
@@ -19,6 +19,7 @@ export const createResource = query(insertResourceSchema, async (input) => {
 
 		return 'Resource successfully created and embedded.';
 	} catch (e) {
+		console.log('hello', e);
 		if (e instanceof Error) return e.message.length > 0 ? e.message : 'Error, please try again.';
 	}
 });
